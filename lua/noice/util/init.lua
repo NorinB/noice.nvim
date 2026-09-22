@@ -14,14 +14,7 @@ function M.t(str)
   return vim.api.nvim_replace_termcodes(str, true, true, true)
 end
 
-M.CR = M.t("<cr>")
-M.ESC = M.t("<esc>")
 M.BS = M.t("<bs>")
-M.EXIT = M.t("<C-\\><C-n>")
-M.LUA_CALLBACK = "\x80\253g"
-M.RIGHT = M.t("<right>")
-M.LEFT = M.t("<left>")
-M.CMD = "\x80\253h"
 
 ---@param fn fun():any
 function M.ignore_events(fn)
@@ -145,41 +138,6 @@ end
 
 function M.module_exists(mod)
   return pcall(_G.require, mod) == true
-end
-
-function M.diff(a, b)
-  a = vim.deepcopy(a)
-  b = vim.deepcopy(b)
-  M._diff(a, b)
-  return { left = a, right = b }
-end
-
-function M._diff(a, b)
-  if a == b then
-    return true
-  end
-  if type(a) ~= type(b) then
-    return false
-  end
-  if type(a) == "table" then
-    local equal = true
-    for k, v in pairs(a) do
-      if M._diff(v, b[k]) then
-        a[k] = nil
-        b[k] = nil
-      else
-        equal = false
-      end
-    end
-    for k, _ in pairs(b) do
-      if a[k] == nil then
-        equal = false
-        break
-      end
-    end
-    return equal
-  end
-  return false
 end
 
 ---@param opts? {blocking:boolean, mode:boolean, input:boolean, redraw:boolean}

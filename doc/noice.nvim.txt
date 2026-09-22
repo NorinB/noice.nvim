@@ -78,8 +78,8 @@ CONFIGURATION                                 *noice.nvim-noice-configuration*
 See the README for the full default configuration. The top level options are:
 
   `cmdline`   enable the cmdline UI, pick its view and the per-command formats
-  `messages`  enable the messages UI and pick the views for each message type
-  `redirect`  default route for |noice.redirect()|
+  `messages`  enable the messages UI, pick the views for each message type and
+              cap the history with `history_max`
   `commands`  custom `:Noice <name>` commands
   `health`    periodic health checks
   `presets`   `bottom_search`, `command_palette`, `inc_rename`
@@ -187,16 +187,6 @@ USAGE                                                 *noice.nvim-noice-usage*
   `:Noice log`                         open the Noice log file
 
 Every command is also available as `:Noice<Name>`, e.g. `:NoiceDismiss`.
-
-                                                            *noice.redirect()*
-Redirect the output of a command to another view:
-
->lua
-    require("noice").redirect("messages")
-    vim.keymap.set("c", "<S-Enter>", function()
-      require("noice").redirect(vim.fn.getcmdline())
-    end, { desc = "Redirect cmdline" })
-<
 
 HIGHLIGHT GROUPS                           *noice.nvim-noice-highlight-groups*
 

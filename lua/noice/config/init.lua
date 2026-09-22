@@ -44,13 +44,7 @@ function M.defaults()
       view_warn = "notify", -- view for warnings
       view_history = "messages", -- view for :messages
       view_search = "virtualtext", -- view for search count messages. Set to `false` to disable
-    },
-    -- default options for require('noice').redirect
-    -- see the section on Command Redirection
-    ---@type NoiceRouteConfig
-    redirect = {
-      view = "popup",
-      filter = { event = "msg_show" },
+      history_max = 1000, -- maximum number of messages kept for `:Noice history` and the pickers
     },
     -- You can add any custom commands below that will be available with `:Noice command`
     ---@type table<string, NoiceCommand>

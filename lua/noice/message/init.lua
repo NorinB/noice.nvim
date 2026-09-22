@@ -48,50 +48,12 @@ function Message:init(event, kind, content)
   Message.super.init(self, content)
 end
 
--- Returns the first buffer that has rendered the message
----@return buffer?
-function Message:buf()
-  return self:bufs()[1]
-end
-
-function Message:bufs()
-  return vim.tbl_filter(function(buf)
-    return vim.api.nvim_buf_is_valid(buf) and self.on_buf(buf)
-  end, vim.api.nvim_list_bufs())
-end
-
-function Message:wins()
-  return vim.tbl_filter(function(win)
-    return vim.api.nvim_win_is_valid(win) and self:on_win(win)
-  end, vim.api.nvim_list_wins())
-end
-
--- Returns the first window that displays the message
----@return window?
-function Message:win()
-  return self:wins()[1]
-end
-
-function Message:focus()
-  local win = self:win()
-  if win then
-    vim.api.nvim_set_current_win(win)
-    -- switch to normal mode
-    vim.cmd("stopinsert")
-    return true
-  end
-end
-
 function Message:on_remove()
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
     if self:on_buf(buf) then
       self._buf_messages[buf][self.id] = nil
     end
   end
-end
-
-function Message:on_win(win)
-  return self:on_buf(vim.api.nvim_win_get_buf(win))
 end
 
 function Message:on_buf(buf)

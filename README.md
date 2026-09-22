@@ -58,6 +58,8 @@ Run `:checkhealth noice` after installing.
 
 ```lua
   cmdline = {
+    -- NOTE: `messages` attaches `ext_messages`, which implies `ext_cmdline` and sets `cmdheight=0`.
+    -- Disabling the cmdline while messages are enabled leaves nothing drawing the cmdline.
     enabled = true, -- enables the Noice cmdline UI
     view = "cmdline_popup", -- view for rendering the cmdline. Change to `cmdline` to get a classic cmdline at the bottom
     opts = {}, -- global options for the cmdline. See section on views
@@ -89,13 +91,7 @@ Run `:checkhealth noice` after installing.
     view_warn = "notify", -- view for warnings
     view_history = "messages", -- view for :messages
     view_search = "virtualtext", -- view for search count messages. Set to `false` to disable
-  },
-  -- default options for require('noice').redirect
-  -- see the section on Command Redirection
-  ---@type NoiceRouteConfig
-  redirect = {
-    view = "popup",
-    filter = { event = "msg_show" },
+    history_max = 1000, -- maximum number of messages kept for `:Noice history` and the pickers
   },
   -- You can add any custom commands below that will be available with `:Noice command`
   ---@type table<string, NoiceCommand>
@@ -335,17 +331,6 @@ For telescope, load the extension first: `require("telescope").load_extension("n
 | `:Noice log` | open the Noice log file |
 
 Every command is also available as `:Noice<Name>`, for example `:NoiceDismiss`.
-
-### ↪️ Command Redirection
-
-Redirect the output of a command to another view:
-
-```lua
-require("noice").redirect("messages")
-vim.keymap.set("c", "<S-Enter>", function()
-  require("noice").redirect(vim.fn.getcmdline())
-end, { desc = "Redirect cmdline" })
-```
 
 ## 🌈 Highlight Groups
 

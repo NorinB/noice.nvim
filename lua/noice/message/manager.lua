@@ -1,6 +1,9 @@
+local require = require("noice.util.lazy")
+
 local M = {}
 
 local _tick = 1
+local _history_count = 0
 
 local function next_tick()
   _tick = _tick + 1
@@ -22,8 +25,32 @@ function M.add(message)
   if not (message:is_empty() and vim.tbl_isempty(message.opts)) then
     message.tick = next_tick()
     message.mtime = vim.fn.localtime()
+    if M._history[message.id] == nil then
+      _history_count = _history_count + 1
+    end
     M._history[message.id] = message
     M._messages[message.id] = message
+    M.prune_history()
+  end
+end
+
+-- `ext_messages` routes every message through Noice, so the history would grow
+-- for the whole session without this.
+function M.prune_history()
+  local max = require("noice.config").options.messages.history_max
+  if _history_count <= max * 1.5 then
+    return
+  end
+  local messages = {}
+  for _, message in pairs(M._history) do
+    messages[#messages + 1] = message
+  end
+  M.sort(messages)
+  M._history = {}
+  _history_count = 0
+  for i = math.max(1, #messages - max + 1), #messages do
+    M._history[messages[i].id] = messages[i]
+    _history_count = _history_count + 1
   end
 end
 
@@ -38,6 +65,7 @@ end
 function M.remove(message)
   if M._history[message.id] then
     M._history[message.id] = nil
+    _history_count = _history_count - 1
     next_tick()
   end
   if M._messages[message.id] then
@@ -53,15 +81,6 @@ function M.clear(filter)
     M._messages[message.id] = nil
     next_tick()
   end, filter)
-end
-
----@param max number
-function M.prune(max)
-  local keep = M.get(nil, { count = max })
-  M._messages = {}
-  for _, message in ipairs(keep) do
-    M._messages[message.id] = message
-  end
 end
 
 -- Sorts messages in-place by mtime & id
