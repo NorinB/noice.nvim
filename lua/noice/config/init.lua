@@ -11,6 +11,8 @@ function M.defaults()
   ---@class NoiceConfig
   local defaults = {
     cmdline = {
+      -- NOTE: `messages` attaches `ext_messages`, which implies `ext_cmdline` and sets `cmdheight=0`.
+      -- Disabling the cmdline while messages are enabled leaves nothing drawing the cmdline.
       enabled = true, -- enables the Noice cmdline UI
       view = "cmdline_popup", -- view for rendering the cmdline. Change to `cmdline` to get a classic cmdline at the bottom
       opts = {}, -- global options for the cmdline. See section on views

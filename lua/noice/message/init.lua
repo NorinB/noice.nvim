@@ -3,6 +3,8 @@ local require = require("noice.util.lazy")
 local Block = require("noice.text.block")
 local Filter = require("noice.message.filter")
 
+---@alias NotifyLevel "trace"|"debug"|"info"|"warn"|"error"|"off"
+
 local _id = 0
 
 ---@class NoiceMessage: NoiceBlock

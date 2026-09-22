@@ -1,6 +1,6 @@
 # 💥 Noice _(cmdline + search)_
 
-A stripped-down fork of [folke/noice.nvim](https://github.com/folke/noice.nvim) that keeps exactly two
+A stripped-down fork of [folke/noice.nvim](https://github.com/folke/noice.nvim) built around two UI
 features:
 
 - **a floating cmdline** with per-command icons, titles and Treesitter highlighting
@@ -10,11 +10,20 @@ Everything else that upstream Noice ships — LSP hover, signature help, LSP pro
 `vim.notify` replacement, the markdown renderer, the popupmenu (wildmenu) UI and the
 desktop-notification backends — has been removed.
 
+What remains besides those two features is the plumbing they force (see below) plus the
+`:Noice` commands, the message history with its pickers, the statusline API and the confirm
+dialog.
+
 ## ⚠️ Messages are still routed through Noice
 
 Neovim only emits the `msg_show` event with kind `search_count` when a UI attaches with
 `ext_messages`. That flag makes Neovim hand **every** message to the plugin, so the search count
-virtual text is not available without also taking over messages.
+virtual text is not available without also taking over messages. Returning from the handler does
+not hand a message back to Neovim to draw — it only stops propagation to remote UIs.
+
+`ext_messages` also implies `ext_cmdline` and sets `cmdheight=0`. So `messages.enabled = false`
+disables the search count, and `cmdline.enabled = false` while messages are on leaves nothing
+drawing the cmdline at all.
 
 All non-search messages are therefore forwarded to the `notify` view, which renders through
 [snacks.nvim](https://github.com/folke/snacks.nvim) and falls back to the built-in `mini` view.
@@ -34,7 +43,7 @@ Set `messages.view*` to any other view to change that.
 ```lua
 -- lazy.nvim
 {
-  "folke/noice.nvim",
+  "NorinB/noice.nvim",
   event = "VeryLazy",
   opts = {},
   dependencies = { "MunifTanjim/nui.nvim" },
@@ -182,10 +191,12 @@ Filters select the messages a route applies to. Every field must match, unless i
 | **kind** | `string\|string[]` | ui event kind, for example `search_count` |
 | **error** | `boolean` | message is an error |
 | **warning** | `boolean` | message is a warning |
-| **empty** | `boolean` | message is empty |
 | **find** | `string` | Lua pattern matched against the message content |
+| **message** | `NoiceMessage[]` | message is one of these messages |
+| **cond** | `fun(message):boolean` | custom predicate |
 | **min_height** / **max_height** | `number` | height of the message |
 | **min_width** / **max_width** | `number` | width of the message |
+| **min_length** / **max_length** | `number` | length of the message content |
 | **cmdline** | `string` | Lua pattern matched against the active cmdline |
 | **any** | `filter[]` | at least one filter matches |
 | **not** | `filter` | the filter does not match |
@@ -203,7 +214,7 @@ A view is a backend plus a set of options. Available backends:
 | **snacks** | notifications through `snacks.nvim` |
 | **virtualtext** | virtual text at the end of the cursor line |
 
-Configured views: `virtualtext`, `notify`, `split`, `cmdline_output`, `messages`, `popup`, `cmdline`, `mini`, `cmdline_popup`, `cmdline_input`, `confirm`.
+Configured views: `virtualtext`, `notify`, `split`, `messages`, `popup`, `cmdline`, `mini`, `cmdline_popup`, `cmdline_input`, `confirm`.
 
 Override or add views with the `views` option:
 
@@ -317,7 +328,10 @@ For telescope, load the extension first: `require("telescope").load_extension("n
 | `:Noice dismiss` | dismiss all visible messages |
 | `:Noice errors` | show the error history |
 | `:Noice disable` / `:Noice enable` | stop or start Noice |
+| `:Noice all` | show all messages, including the internal ones |
 | `:Noice stats` | show debugging stats |
+| `:Noice routes` / `:Noice config` / `:Noice viewstats` | dump the resolved routes, config or view stats |
+| `:Noice debug` | toggle debug mode |
 | `:Noice log` | open the Noice log file |
 
 Every command is also available as `:Noice<Name>`, for example `:NoiceDismiss`.

@@ -148,12 +148,6 @@ function M.enable()
   })
 end
 
-function M.redirect()
-  M.disable()
-  Router.echo_pending()
-  vim.schedule(M.enable)
-end
-
 function M.disable()
   if M._attached then
     M._attached = false

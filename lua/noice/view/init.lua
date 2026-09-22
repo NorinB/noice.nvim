@@ -16,7 +16,7 @@ local Util = require("noice.util")
 ---@field lang? string
 ---@field view string
 
----@alias NoiceViewOptions NoiceViewBaseOptions|NoiceNuiOptions|NoiceNotifyOptions
+---@alias NoiceViewOptions NoiceViewBaseOptions|NoiceNuiOptions
 
 ---@class NoiceView
 ---@field _tick number

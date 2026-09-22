@@ -47,28 +47,10 @@ function M.add(hl_group, link)
   end
 end
 
-function M.get_link(hl_group)
-  local ok, opts = pcall(vim.api.nvim_get_hl_by_name, hl_group, true)
-  if opts then
-    opts[vim.type_idx] = nil
-  end
-  if not ok or vim.tbl_isempty(opts) then
-    opts = { link = hl_group }
-  end
-  opts.default = true
-  return opts
-end
-
 function M.setup()
   for hl, link in pairs(M.defaults) do
     if link ~= "none" then
-      local opts = { link = link, default = true }
-
-      if vim.tbl_contains({ "IncSearch", "Search" }, link) then
-        opts = M.get_link(link)
-      end
-
-      vim.api.nvim_set_hl(0, "Noice" .. hl, opts)
+      vim.api.nvim_set_hl(0, "Noice" .. hl, { link = link, default = true })
     end
   end
   vim.api.nvim_set_hl(0, "NoiceHiddenCursor", { blend = 100, nocombine = true })

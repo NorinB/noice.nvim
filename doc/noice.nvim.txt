@@ -20,26 +20,35 @@ Table of Contents                               *noice.nvim-table-of-contents*
 ==============================================================================
 1. Noice                                                    *noice.nvim-noice*
 
-A stripped-down fork of folke/noice.nvim that keeps exactly two features:
+A stripped-down fork of folke/noice.nvim built around two UI features:
 
 - a floating cmdline with per-command icons, titles and Treesitter highlighting
 - search count as virtual text next to the matching line (`/`, `?`, `n`, `N`)
 
 LSP hover, signature help, LSP progress, the `vim.notify` replacement, the
 markdown renderer, the popupmenu (wildmenu) UI and the desktop-notification
-backends have been removed.
+backends have been removed. What remains besides those two features is the
+plumbing they force (see below) plus the `:Noice` commands, the message history
+with its pickers, the statusline API and the confirm dialog.
 
 MESSAGES                                           *noice.nvim-noice-messages*
 
 Neovim only emits the `msg_show` event with kind `search_count` when a UI
 attaches with `ext_messages`. That flag makes Neovim hand every message to the
 plugin, so the search count virtual text is not available without also taking
-over messages.
+over messages. Returning from the handler does not hand a message back to
+Neovim to draw — it only stops propagation to remote UIs.
+
+`ext_messages` also implies `ext_cmdline` and sets `cmdheight=0`. So
+`messages.enabled = false` disables the search count, and
+`cmdline.enabled = false` while messages are on leaves nothing drawing the
+cmdline at all.
 
 All non-search messages are forwarded to the `notify` view, which renders
 through snacks.nvim and falls back to the built-in `mini` view. Set
 `messages.view`, `messages.view_error`, `messages.view_warn` and
-`messages.view_history` to change that.
+`messages.view_history` to change that. `messages.view_search` controls the
+search count view and defaults to `virtualtext`.
 
 REQUIREMENTS                                   *noice.nvim-noice-requirements*
 
@@ -55,7 +64,7 @@ INSTALLATION                                   *noice.nvim-noice-installation*
 >lua
     -- lazy.nvim
     {
-      "folke/noice.nvim",
+      "NorinB/noice.nvim",
       event = "VeryLazy",
       opts = {},
       dependencies = { "MunifTanjim/nui.nvim" },
@@ -93,10 +102,12 @@ it is nested under `any` or `not`.
   `event`                     ui event, e.g. `msg_show` or `cmdline`
   `kind`                      ui event kind, e.g. `search_count`
   `error` / `warning`         message level
-  `empty`                     message is empty
   `find`                      Lua pattern matched against the content
+  `message`                   message is one of these messages
+  `cond`                      custom predicate
   `min_height` / `max_height` height of the message
   `min_width` / `max_width`   width of the message
+  `min_length` / `max_length` length of the message content
   `cmdline`                   Lua pattern matched against the active cmdline
   `any`                       at least one of the nested filters matches
   `not`                       the nested filter does not match
@@ -107,9 +118,8 @@ VIEWS                                                 *noice.nvim-noice-views*
 A view is a backend plus a set of options. Backends: `popup`, `split`, `mini`,
 `snacks` and `virtualtext`.
 
-Configured views: `virtualtext`, `notify`, `split`, `cmdline_output`,
-`messages`, `popup`, `cmdline`, `mini`, `cmdline_popup`, `cmdline_input` and
-`confirm`.
+Configured views: `virtualtext`, `notify`, `split`, `messages`, `popup`,
+`cmdline`, `mini`, `cmdline_popup`, `cmdline_input` and `confirm`.
 
 >lua
     require("noice").setup({
@@ -168,7 +178,12 @@ USAGE                                                 *noice.nvim-noice-usage*
   `:Noice dismiss`                     dismiss all visible messages
   `:Noice errors`                      show the error history
   `:Noice disable` / `:Noice enable`   stop or start Noice
+  `:Noice all`                         show all messages, internal included
   `:Noice stats`                       show debugging stats
+  `:Noice routes`                      dump the resolved routes
+  `:Noice config`                      dump the resolved config
+  `:Noice viewstats`                   dump per-view message counts
+  `:Noice debug`                       toggle debug mode
   `:Noice log`                         open the Noice log file
 
 Every command is also available as `:Noice<Name>`, e.g. `:NoiceDismiss`.

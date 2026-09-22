@@ -12,6 +12,13 @@ local defaults = {
   replace = false,
 }
 
+---@class NotifyMsg
+---@field content? string
+---@field messages NoiceMessage[]
+---@field title? string
+---@field level? NotifyLevel
+---@field opts? table<string, any>
+
 ---@class SnacksView: NoiceView
 ---@field notif_id? string|number
 ---@field super NoiceView

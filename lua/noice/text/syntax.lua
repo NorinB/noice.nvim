@@ -14,7 +14,7 @@ function M.highlight(buf, ns, range, lang)
     lang = fix(lang)
     local group = "@" .. lang:upper()
 
-    -- HACK: reset current_syntax, since some syntax files like markdown won't load if it is already set
+    -- HACK: reset current_syntax, since some syntax files won't load if it is already set
     pcall(vim.api.nvim_buf_del_var, buf, "current_syntax")
     if not pcall(vim.cmd, string.format("syntax include %s syntax/%s.vim", group, lang)) then
       return

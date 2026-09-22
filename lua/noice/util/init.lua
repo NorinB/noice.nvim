@@ -23,40 +23,6 @@ M.RIGHT = M.t("<right>")
 M.LEFT = M.t("<left>")
 M.CMD = "\x80\253h"
 
----@generic F: fun()
----@param fn F
----@return F
-function M.once(fn)
-  local done = false
-  return function(...)
-    if not done then
-      fn(...)
-      done = true
-    end
-  end
-end
-
-function M.open(uri)
-  local cmd
-  if vim.fn.has("win32") == 1 then
-    cmd = { "cmd.exe", "/c", "start", '""', vim.fn.shellescape(uri) }
-  elseif vim.fn.has("macunix") == 1 then
-    cmd = { "open", uri }
-  else
-    cmd = { "xdg-open", uri }
-  end
-
-  local ret = vim.fn.system(cmd)
-  if vim.v.shell_error ~= 0 then
-    local msg = {
-      "Failed to open uri",
-      ret,
-      vim.inspect(cmd),
-    }
-    vim.notify(table.concat(msg, "\n"), vim.log.levels.ERROR)
-  end
-end
-
 ---@param fn fun():any
 function M.ignore_events(fn)
   local ei = vim.go.eventignore
@@ -214,14 +180,6 @@ function M._diff(a, b)
     return equal
   end
   return false
-end
-
-function M.is_search()
-  local cmdline = require("noice.ui.cmdline")
-  local c = cmdline.active
-  if c and (c.state.firstc == "/" or c.state.firstc == "?") then
-    return true
-  end
 end
 
 ---@param opts? {blocking:boolean, mode:boolean, input:boolean, redraw:boolean}
