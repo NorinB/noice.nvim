@@ -62,24 +62,6 @@ M.builtin = {
     "\n",
     "{message}",
   },
-  lsp_progress = {
-    {
-      "{progress} ",
-      key = "progress.percentage",
-      contents = {
-        { "{data.progress.message} " },
-      },
-    },
-    "({data.progress.percentage}%) ",
-    { "{spinner} ", hl_group = "NoiceLspProgressSpinner" },
-    { "{data.progress.title} ", hl_group = "NoiceLspProgressTitle" },
-    { "{data.progress.client} ", hl_group = "NoiceLspProgressClient" },
-  },
-  lsp_progress_done = {
-    { "✔ ", hl_group = "NoiceLspProgressSpinner" },
-    { "{data.progress.title} ", hl_group = "NoiceLspProgressTitle" },
-    { "{data.progress.client} ", hl_group = "NoiceLspProgressClient" },
-  },
 }
 
 ---@class NoiceFormatOptions
@@ -102,25 +84,9 @@ M.defaults = {
     },
     icons = { error = " ", warn = " ", info = " " },
   },
-  ---@class NoiceFormatOptions.progress
-  progress = {
-    ---@type NoiceFormat
-    contents = {},
-    width = 20,
-    align = "right",
-    key = "progress", -- key in message.opts For example: "progress.percentage"
-    hl_group = "NoiceFormatProgressTodo",
-    hl_group_done = "NoiceFormatProgressDone",
-  },
   ---@class NoiceFormatOptions.text
   text = {
     text = nil,
-    hl_group = nil,
-  },
-  ---@class NoiceFormatOptions.spinner
-  spinner = {
-    ---@type Spinner
-    name = "dots",
     hl_group = nil,
   },
   ---@class NoiceFormatOptions.data

@@ -52,16 +52,6 @@ M.presets = {
       },
     },
   },
-  lsp_doc_border = {
-    views = {
-      hover = {
-        border = {
-          style = "rounded",
-        },
-        position = { row = 2, col = 2 },
-      },
-    },
-  },
   command_palette = {
     views = {
       cmdline_popup = {
@@ -74,33 +64,6 @@ M.presets = {
           width = "auto",
           height = "auto",
         },
-      },
-      cmdline_popupmenu = {
-        relative = "editor",
-        position = {
-          row = 6,
-          col = "50%",
-        },
-        size = {
-          width = 60,
-          height = "auto",
-          max_height = 15,
-        },
-        border = {
-          style = "rounded",
-          padding = { 0, 1 },
-        },
-        win_options = {
-          winhighlight = { Normal = "Normal", FloatBorder = "NoiceCmdlinePopupBorder" },
-        },
-      },
-    },
-  },
-  long_message_to_split = {
-    routes = {
-      {
-        filter = { event = "msg_show", min_height = 20 },
-        view = "cmdline_output",
       },
     },
   },
@@ -117,14 +80,6 @@ M.presets = {
             position = { row = -3, col = 0 },
           },
         },
-      },
-    },
-  },
-  cmdline_output_to_split = {
-    routes = {
-      {
-        view = "cmdline_output",
-        filter = { cmdline = "^:" },
       },
     },
   },

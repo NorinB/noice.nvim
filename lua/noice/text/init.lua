@@ -1,6 +1,5 @@
 local require = require("noice.util.lazy")
 
-local Markdown = require("noice.text.markdown")
 local NuiText = require("nui.text")
 local Syntax = require("noice.text.syntax")
 local Treesitter = require("noice.text.treesitter")
@@ -68,10 +67,6 @@ function NoiceText:highlight(bufnr, ns_id, linenr, byte_start)
       Treesitter.highlight(bufnr, ns_id, range, self.extmark.lang)
     else
       Syntax.highlight(bufnr, ns_id, range, self.extmark.lang)
-    end
-    if self.extmark.lang == "markdown" then
-      Markdown.keys(bufnr)
-      Markdown.conceal_escape_characters(bufnr, ns_id, range)
     end
     return
   end

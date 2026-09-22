@@ -38,9 +38,6 @@ end
 
 function M.disable()
   Config._running = false
-  if Config.options.notify.enabled then
-    require("noice.source.notify").disable()
-  end
   require("noice.message.router").disable()
   require("noice.ui").disable()
   require("noice.util.hacks").disable()
@@ -62,9 +59,6 @@ function M.enable()
     end,
   })
   Config._running = true
-  if Config.options.notify.enabled then
-    require("noice.source.notify").enable()
-  end
   require("noice.util.hacks").enable()
   require("noice.ui").enable()
   require("noice.message.router").enable()
@@ -79,13 +73,6 @@ end
 ---@param routes? NoiceRouteConfig[] custom routes. Defaults to `config.redirect`
 function M.redirect(cmd, routes)
   return require("noice.message.router").redirect(cmd, routes)
-end
-
----@param msg string
----@param level number|string
----@param opts? table<string, any>
-function M.notify(msg, level, opts)
-  return require("noice.source.notify").notify(msg, level, opts)
 end
 
 return M

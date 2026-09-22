@@ -5,8 +5,8 @@ local Manager = require("noice.message.manager")
 local Router = require("noice.message.router")
 local Util = require("noice.util")
 
----@alias NoiceEvent MsgEvent|CmdlineEvent|NotifyEvent|LspEvent
----@alias NoiceKind MsgKind|NotifyLevel|LspKind
+---@alias NoiceEvent MsgEvent|CmdlineEvent
+---@alias NoiceKind MsgKind|NotifyLevel
 
 local M = {}
 M._attached = false
@@ -33,7 +33,6 @@ function M.setup()
   local widgets = {
     messages = "msg",
     cmdline = "cmdline",
-    popupmenu = "popupmenu",
   }
 
   -- Check if we're running inside a GUI that already externalizes some widgets

@@ -19,23 +19,7 @@ end
 
 ---@return NoiceRouteConfig[]
 function M.defaults()
-  ---@type NoiceRouteConfig[]
-  local ret = {}
-
-  for _, kind in ipairs({ "signature", "hover" }) do
-    table.insert(ret, {
-      view = Config.options.lsp[kind].view or Config.options.lsp.documentation.view,
-      filter = { event = "lsp", kind = kind },
-      opts = vim.tbl_deep_extend(
-        "force",
-        {},
-        Config.options.lsp.documentation.opts,
-        Config.options.lsp[kind].opts or {}
-      ),
-    })
-  end
-
-  return vim.list_extend(ret, {
+  return {
     {
       view = Config.options.cmdline.view,
       opts = Config.options.cmdline.opts,
@@ -53,12 +37,7 @@ function M.defaults()
     },
     {
       view = Config.options.messages.view_history,
-      filter = {
-        any = {
-          { event = "msg_history_show" },
-          -- { min_height = 20 },
-        },
-      },
+      filter = { event = "msg_history_show" },
     },
     {
       view = Config.options.messages.view_search,
@@ -95,28 +74,14 @@ function M.defaults()
       opts = { title = "Warning" },
     },
     {
-      view = Config.options.notify.view,
-      filter = { event = "notify" },
-      opts = { title = "Notify" },
-    },
-    {
-      view = Config.options.notify.view,
+      view = "notify",
       filter = {
         event = "noice",
         kind = { "stats", "debug" },
       },
       opts = { lang = "lua", replace = true, title = "Noice" },
     },
-    {
-      view = Config.options.lsp.progress.view,
-      filter = { event = "lsp", kind = "progress" },
-    },
-    {
-      view = Config.options.lsp.message.view,
-      opts = Config.options.lsp.message.opts,
-      filter = { event = "lsp", kind = "message" },
-    },
-  })
+  }
 end
 
 return M

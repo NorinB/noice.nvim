@@ -3,8 +3,7 @@
     "library": {
       "plugins": [
         "nui.nvim",
-        "nvim-cmp",
-        "nvim-notify",
+        "snacks.nvim",
         "telescope.nvim",
         "plenary.nvim"
       ]

@@ -1,7 +1,6 @@
 local require = require("noice.util.lazy")
 
 local Config = require("noice.config")
-local Hacks = require("noice.util.hacks")
 
 local M = {}
 
@@ -275,21 +274,9 @@ end
 ---@param level number
 ---@param ... any
 function M.notify(msg, level, ...)
-  if M.module_exists("notify") then
-    require("notify").notify(msg:format(...), level, {
-      title = "noice.nvim",
-      on_open = function(win)
-        vim.api.nvim_win_set_option(win, "conceallevel", 3)
-        local buf = vim.api.nvim_win_get_buf(win)
-        vim.api.nvim_buf_set_option(buf, "filetype", "markdown")
-        vim.api.nvim_win_set_option(win, "spell", false)
-      end,
-    })
-  else
-    vim.notify(msg:format(...), level, {
-      title = "noice.nvim",
-    })
-  end
+  vim.notify(msg:format(...), level, {
+    title = "noice.nvim",
+  })
 end
 
 ---@type table<string, boolean>
@@ -326,7 +313,6 @@ end
 --- Will stop Noice and show error
 function M.panic(msg, ...)
   require("noice").disable()
-  require("noice.view.backend.notify").dismiss()
   vim.notify(msg:format(...), vim.log.levels.ERROR)
   error("Noice was stopped to prevent further errors", 0)
 end
