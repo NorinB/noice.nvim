@@ -89,6 +89,13 @@ function M.defaults()
         filter = {},
       },
     },
+    lsp = {
+      progress = {
+        enabled = true, -- enables the LSP progress notification
+        view = "lsp_progress", -- view for rendering LSP progress
+        throttle = 1000 / 10, -- frequency to advance the spinner
+      },
+    },
     health = {
       checker = true, -- Disable if you don't want health checks to run
     },

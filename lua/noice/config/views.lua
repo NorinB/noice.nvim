@@ -136,6 +136,10 @@ M.defaults = {
       },
     },
   },
+  lsp_progress = {
+    view = "mini",
+    timeout = 1000,
+  },
   cmdline_popup = {
     backend = "popup",
     relative = "editor",

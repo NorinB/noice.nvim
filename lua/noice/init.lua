@@ -38,6 +38,7 @@ end
 
 function M.disable()
   Config._running = false
+  require("noice.lsp.progress").disable()
   require("noice.message.router").disable()
   require("noice.ui").disable()
   require("noice.util.hacks").disable()
@@ -59,6 +60,9 @@ function M.enable()
     end,
   })
   Config._running = true
+  if Config.options.lsp.progress.enabled then
+    require("noice.lsp.progress").enable()
+  end
   require("noice.util.hacks").enable()
   require("noice.ui").enable()
   require("noice.message.router").enable()
