@@ -74,6 +74,10 @@ function M.defaults()
       opts = { title = "Warning" },
     },
     {
+      view = Config.options.lsp.progress.view,
+      filter = { event = "lsp", kind = "progress" },
+    },
+    {
       view = "notify",
       filter = {
         event = "noice",

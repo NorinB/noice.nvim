@@ -1,16 +1,17 @@
 # 💥 Noice _(cmdline + search)_
 
-A stripped-down fork of [folke/noice.nvim](https://github.com/folke/noice.nvim) built around two UI
+A stripped-down fork of [folke/noice.nvim](https://github.com/folke/noice.nvim) built around three UI
 features:
 
 - **a floating cmdline** with per-command icons, titles and Treesitter highlighting
 - **search count as virtual text** next to the matching line (`/`, `?`, `n`, `N`)
+- **LSP progress** as a small notification in the bottom-right corner
 
-Everything else that upstream Noice ships — LSP hover, signature help, LSP progress,
-`vim.notify` replacement, the markdown renderer, the popupmenu (wildmenu) UI and the
+Everything else that upstream Noice ships — LSP hover, signature help, the `vim.notify`
+replacement, the markdown renderer, the popupmenu (wildmenu) UI and the
 desktop-notification backends — has been removed.
 
-What remains besides those two features is the plumbing they force (see below) plus the
+What remains besides those three features is the plumbing they force (see below) plus the
 `:Noice` commands, the message history with its pickers, the statusline API and the confirm
 dialog.
 
@@ -31,7 +32,7 @@ Set `messages.view*` to any other view to change that.
 
 ## ⚡️ Requirements
 
-- Neovim >= 0.9.0 (0.11+ recommended)
+- Neovim >= 0.9.0 (0.11+ recommended, 0.10+ for LSP progress)
 - [nui.nvim](https://github.com/MunifTanjim/nui.nvim)
 - [snacks.nvim](https://github.com/folke/snacks.nvim) for the `notify` view (optional, falls back to `mini`)
 - a [Nerd Font](https://www.nerdfonts.com/) for the cmdline icons (optional)
@@ -136,6 +137,13 @@ Run `:checkhealth noice` after installing.
       filter = {},
     },
   },
+  lsp = {
+    progress = {
+      enabled = true, -- enables the LSP progress notification
+      view = "lsp_progress", -- view for rendering LSP progress
+      throttle = 1000 / 10, -- frequency to advance the spinner
+    },
+  },
   health = {
     checker = true, -- Disable if you don't want health checks to run
   },
@@ -172,6 +180,37 @@ Run `:checkhealth noice` after installing.
 | `inc_rename` | input dialog for [inc-rename.nvim](https://github.com/smjonas/inc-rename.nvim) |
 
 Enable a preset with `presets = { bottom_search = true }`, or pass a table to override parts of it.
+
+### LSP Progress
+
+An `LspProgress` autocmd turns each client's progress token into a message and routes it to the
+`lsp_progress` view — the `mini` backend in the bottom-right corner. One line per token, with a
+spinner, the percentage, the progress title and the client name. The line turns into `✔` when the
+token ends and disappears `views.lsp_progress.timeout` ms later.
+
+Move it to the bottom-left corner with:
+
+```lua
+require("noice").setup({
+  views = { lsp_progress = { position = { col = 0 }, align = "message-left" } },
+})
+```
+
+Set `lsp.progress.enabled = false` to turn the feature off entirely.
+
+The feature needs Neovim 0.10+, which introduced the `LspProgress` event; on older versions it is
+silently skipped.
+
+`lsp_progress` and `mini` are separate windows in the same corner. That is fine as long as messages
+render through snacks.nvim, but without it the `notify` view falls back to `mini` and the two
+windows overlap. In that case let them share one window, which stacks the lines instead (the shared
+view uses `mini`'s 2000 ms timeout):
+
+```lua
+require("noice").setup({
+  lsp = { progress = { view = "mini" } },
+})
+```
 
 ## 🔍 Filters
 
@@ -210,7 +249,7 @@ A view is a backend plus a set of options. Available backends:
 | **snacks** | notifications through `snacks.nvim` |
 | **virtualtext** | virtual text at the end of the cursor line |
 
-Configured views: `virtualtext`, `notify`, `split`, `messages`, `popup`, `cmdline`, `mini`, `cmdline_popup`, `cmdline_input`, `confirm`.
+Configured views: `virtualtext`, `notify`, `split`, `messages`, `lsp_progress`, `popup`, `cmdline`, `mini`, `cmdline_popup`, `cmdline_input`, `confirm`.
 
 Override or add views with the `views` option:
 
@@ -379,6 +418,9 @@ Every command is also available as `:Noice<Name>`, for example `:NoiceDismiss`.
 | **NoiceFormatLevelTrace** | _NonText_ |  |
 | **NoiceFormatLevelWarn** | _DiagnosticVirtualTextWarn_ |  |
 | **NoiceFormatTitle** | _Title_ |  |
+| **NoiceLspProgressClient** | _Title_ | Lsp progress client name |
+| **NoiceLspProgressSpinner** | _Constant_ | Lsp progress spinner |
+| **NoiceLspProgressTitle** | _NonText_ | Lsp progress title |
 | **NoiceMini** | _MsgArea_ | Normal for mini view |
 | **NoicePopup** | _NormalFloat_ | Normal for popup views |
 | **NoicePopupBorder** | _FloatBorder_ | Border for popup views |
